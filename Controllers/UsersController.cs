@@ -23,15 +23,18 @@ namespace Resist.Models
       }
 
       [HttpPost]
-      public async Task<IActionResult> Create(string username)
+      public async Task<IActionResult> Create([FromBody] User user)
       {
+          if (user == null) {
+            return StatusCode(403);
+          }
           try
           {
             using (var dbContext = new ResistContext())
             {
               User newUser = new User()
               {
-                  Username = username
+                  Username = user.Username
               };
 
               await dbContext.Users.AddAsync(newUser);
