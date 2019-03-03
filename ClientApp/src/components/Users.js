@@ -8,15 +8,10 @@ import {
   FormControl,
   FormGroup,
   Label,
+  Table
 } from 'react-bootstrap';
 
 class Users extends Component {
-  constructor(...args) {
-    super(...args);
-
-    this.state = { validated: false, playerUsers: { users: [] } };
-  }
-  
   componentWillMount() {
     // fetch users when component is created
     const userCount = this.props.users.length || 0;
@@ -30,29 +25,18 @@ class Users extends Component {
   }
 
   handleSubmit(event) {
-    console.log("HELLsdfsafsdfasfsdfO")
     const form = event.currentTarget;
-    // console.lo
     event.preventDefault();
-    // if (form.checkValidity() === false) {
-    //   event.stopPropagation();
-    // }
-    console.log(form.formCreateUser.value);
-    
+
     this.props.createUser({ username: form.formCreateUser.value })
       .then((data) => {
-        console.log("DATA", data);
-      form.formCreateUser.value = "";
-      // this.setState({ validated: true, playerUsers: [...this.state.playerUsers] });
+        form.formCreateUser.value = "";
       });
   }
 
   render() {
     return (
-      <div>
-        <h1>Users</h1>
-        {!this.props.users.length ? <span>There are no users to display.</span> : []}
-        {renderUsers(this.props)}
+      <div className="container">
         <h1>Create User</h1>
         <Form noValidate className="form-inline" onSubmit={e => this.handleSubmit(e)}>
           <FormGroup className="form-group mb-2" controlId="formCreateUser">
@@ -63,6 +47,9 @@ class Users extends Component {
             Submit
           </Button>
         </Form>
+        <h1>Users</h1>
+        {!this.props.users.length ? <span>There are no users to display.</span> : []}
+        {renderUsers(this.props)}
       </div>
     )
   }
@@ -70,11 +57,24 @@ class Users extends Component {
 
 function renderUsers(props) {
   return (
-    <ul className="list-group">
-      {props.users.map(user =>
-        <li key={user.userId} className="list-group-item">{user.username}</li>
-      )}
-    </ul>
+    <div className="table">
+      <Table size="small" responsive hover>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.users.map(user => {
+            return (<tr key={user.userId}>
+              <td>{user.userId}</td>
+              <td>{user.username}</td>
+            </tr>)
+          })}
+        </tbody>
+      </Table>
+    </div>
   )
 }
 

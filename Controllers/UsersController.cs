@@ -18,6 +18,9 @@ namespace Resist.Models
         using (var dbContext = new ResistContext())
         {
           List<User> users = dbContext.Users.ToList();
+          if (users == null) {
+            users = new List<User>();
+          }
           return Json(users);
         }
       }

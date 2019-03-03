@@ -23,8 +23,7 @@ export const actionCreators = {
 
   createUser: (userData) => async (dispatch, getState) => {
     const users = getState().playerUsers.users;
-    
-    dispatch({ type: createUserRequestType, users })
+    dispatch({ type: createUserRequestType })
 
     try {
       const response = await postData('api/Users', userData);
@@ -75,12 +74,11 @@ export const reducer = (state, action) => {
         users: action.users,
         isLoading: false
       };
-    default: {
+    default:
       return {
         ...state,
         users: action.users || [],
         isLoading: false
       };
-    };
   }
 };
