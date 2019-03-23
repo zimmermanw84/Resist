@@ -1,16 +1,31 @@
-﻿import React from 'react';
-import { Route } from 'react-router';
-import Layout from './components/Layout';
-import Home from './components/Home';
-import Counter from './components/Counter';
-import FetchData from './components/FetchData';
-import Users from './components/Users';
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Button } from 'react-bootstrap';
+import StartGame from './components/start-game';
+// import {  } from 'react-router-dom';
 
-export default () => (
-  <Layout>
-    <Route exact path='/' component={Home} />
-    <Route path='/counter' component={Counter} />
-    <Route path='/fetchdata/:startDateIndex?' component={FetchData} />
-    <Route path='/users' component={Users} />
-  </Layout>
-);
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            Welcome To Resist.
+          </p>
+          <Router>
+            <Link to="/start-game">
+              <Button variant="primary">Start Game</Button>
+            </Link>
+          </Router>
+        </header>
+
+        <Route path="/start-game" component={StartGame} />
+      </div>
+    );
+  }
+}
+
+export default App;

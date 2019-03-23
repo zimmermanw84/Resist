@@ -10,6 +10,7 @@ namespace Resist.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<GameUser> GameUsers { get; set; }
+        // public DbSet<Mission> Missions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // TODO: Move somewhere else based on environment
@@ -44,6 +45,11 @@ namespace Resist.Models
 
             modelBuilder.Entity<GameUser>()
                 .HasOne(u => u.Game);
+
+            // FOR THE MANY TO MANY WILL NEED A JOIN MODEL :(
+            // modelBuilder.Entity<GameUser>()
+            //     .HasMany<Mission>(gu => gu.Missions)
+            //     .WithMany()
         }
     }
 }

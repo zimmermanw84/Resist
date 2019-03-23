@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Resist.Models
 {
@@ -17,5 +18,6 @@ namespace Resist.Models
       public int GameId { get; set; }
       public User User { get; set; }
       public Game Game { get; set; }
+      // public virtual ICollection<Mission> Missions { get; set; }
     }
 }
