@@ -4,37 +4,26 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Button, Container, ListGroup } from 'react-bootstrap';
-// import StartGame from './components/start-game';
+import StartGame from './components/start-game';
 // import {  } from 'react-router-dom';
 // import { ListGroup } from 'react-bootstrap';
-import Async from 'react-async';
-import User from "./store/users";
+import { Provider, Subscribe } from 'unstated';
+import UsersContainer from "./store/users";
 
 const Home = () => {
   return (
-    <Container>
-      <p>
-        Welcome To Resist.
-      </p>
-      <Button variant="primary"><Link className="btn btn-primary" to="/start-game">Start Game</Link></Button>
-    </Container>
-  )
-}
-
-const StartGame = () => {
-  return (
-    <Async promiseFn={User.findAll}>
-        {({data, error, isLoading}) => {
-          if (data) {
-            return (
-              <div>
-                {JSON.stringify(data)}
-              </div>
-            )
+    <Provider>
+      <Container>
+        <p>
+          Welcome To Resist.
+        </p>
+        <Subscribe to={[ UsersContainer ]}>
+          {users =>
+            <Button onClick={users.findAll} variant="primary"><Link className="btn btn-primary" to="/start-game">Start Game</Link></Button>
           }
-          return null;
-        }}
-    </Async>
+        </Subscribe>
+      </Container>
+    </Provider>
   )
 }
 

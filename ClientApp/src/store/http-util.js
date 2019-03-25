@@ -1,6 +1,7 @@
 export default class HttpUtil {
   static async _makeRequest(url, options = { method: "GET" }) {
-    return fetch(url, options).json();
+    const response = await fetch(url, options);
+    return response.json();
   }
 
   static async get(url) {
