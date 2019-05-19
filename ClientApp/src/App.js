@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Button, Container } from 'react-bootstrap';
 import StartGame from './components/start-game';
-import RoleAssignment from './components/role-assignment';
+import Game from './components/game';
 import { Provider } from 'unstated';
 
 const Home = () => {
@@ -28,7 +28,7 @@ class App extends Component {
           <Router>
             <Route exact path="/" component={Home} />
             <Route path="/start-game" component={StartGame} />
-            <Route path="/game/:id" component={RoleAssignment} />
+            <Route path="/game/:id" component={Game} />
           </Router>
         </header>
       </div>

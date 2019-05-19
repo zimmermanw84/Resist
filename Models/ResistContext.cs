@@ -46,6 +46,8 @@ namespace Resist.Models
             modelBuilder.Entity<GameUser>()
                 .HasOne(u => u.Game);
 
+            // modelBuilder.Entity<Game>().HasKey( i => i.GameId );
+
             // FOR THE MANY TO MANY WILL NEED A JOIN MODEL :(
             // modelBuilder.Entity<GameUser>()
             //     .HasMany<Mission>(gu => gu.Missions)

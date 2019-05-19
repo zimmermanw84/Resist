@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ListGroup, Form, Button } from 'react-bootstrap';
 import UsersContainer from "../store/users";
 import { Provider, Subscribe } from 'unstated';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const usersContainer = new UsersContainer();
 

@@ -13,7 +13,7 @@ import { Provider, Subscribe } from 'unstated';
 //   )
 // }
 
-export default class RoleAssignment extends Component {
+export default class Game extends Component {
   render() {
     return (
       <div>
