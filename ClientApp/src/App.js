@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { Button, Container, ListGroup } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import StartGame from './components/start-game';
-// import {  } from 'react-router-dom';
-// import { ListGroup } from 'react-bootstrap';
-import { Provider, Subscribe } from 'unstated';
-import UsersContainer from "./store/users";
+import RoleAssignment from './components/role-assignment';
+import { Provider } from 'unstated';
 
 const Home = () => {
   return (
@@ -17,11 +14,7 @@ const Home = () => {
         <p>
           Welcome To Resist.
         </p>
-        <Subscribe to={[ UsersContainer ]}>
-          {users =>
-            <Button onClick={users.findAll} variant="primary"><Link className="btn btn-primary" to="/start-game">Start Game</Link></Button>
-          }
-        </Subscribe>
+        <Button variant="primary"><Link className="btn btn-primary" to="/start-game">Start Game</Link></Button>
       </Container>
     </Provider>
   )
@@ -35,6 +28,7 @@ class App extends Component {
           <Router>
             <Route exact path="/" component={Home} />
             <Route path="/start-game" component={StartGame} />
+            <Route path="/game/:id" component={RoleAssignment} />
           </Router>
         </header>
       </div>

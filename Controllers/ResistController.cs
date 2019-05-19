@@ -7,62 +7,63 @@ using Microsoft.AspNetCore.Mvc;
 
 using Resist.Models;
 
-/**
-  This is from the first iteration - Probably wont use this setup in favor of a restful route setup
- */
 namespace Resist.Controllers
 {
     [Route("api/[controller]")]
     public class ResistController : Controller
     {
-        public IActionResult Index()
+        // Later we'll make this dynamic
+        // for now we're hardcoding players
+        static readonly int SpyCount = 2;
+
+        static Random random = new Random();
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> StartGame([FromBody] List<int> UserIds)
         {
             using (var dbContext = new ResistContext())
             {
-
-                List<User> users = dbContext.Users.ToList();
-                ViewData["Users"] = users;
-
-                return View();
-            }
-        }
-
-        public IActionResult NewGame()
-        {
-            return View();
-        }
-
-        public IActionResult NewUser()
-        {
-            using (var dbContext = new ResistContext())
-            {
-                var Users = dbContext.Users.ToList();
-                ViewData["Users"] = Users;
-
-                return View();
-            }
-        }
-
-        public IActionResult CreateUser(string username)
-        {
-            try
-            {
-                using (var dbContext = new ResistContext())
+                Game newGame = new Game()
                 {
-                    User newUser = new User()
+                    Status = GameStatus.Active
+                };
+                await dbContext.Games.AddAsync(newGame);
+                await dbContext.SaveChangesAsync();
+                List<GameUser> newPlayers = new List<GameUser>();
+
+                foreach(int userId in UserIds) {
+                    // We're starting by creating all the necessary instances
+                    // setting their role to resistance then will randomly select 2 to be spys
+                    GameUser player = new GameUser()
                     {
-                        Username = username
+                        UserId = userId,
+                        GameId = newGame.GameId,
+                        Role = RoleType.Resistance
                     };
 
-                    dbContext.Users.Add(newUser);
-                    dbContext.SaveChanges();
-
-                    return View("NewUser");
+                    newPlayers.Add(player);
                 }
+
+                // Mutates users - picks the spys
+                SelectSpys(newPlayers);
+                await dbContext.GameUsers.AddRangeAsync(newPlayers);
+                await dbContext.SaveChangesAsync();
+
+                return Json(new { GameId = newGame.GameId });
             }
-            catch
+        }
+
+        protected void SelectSpys(List<GameUser> players)
+        {
+            int spyCount = SpyCount;
+            while (spyCount != 0)
             {
-                return View("Error");
+                GameUser spy = players[random.Next(players.Count)];
+                if (spy.Role == RoleType.Resistance)
+                {
+                    spy.Role = RoleType.Spy;
+                    spyCount--;
+                }
             }
         }
     }
