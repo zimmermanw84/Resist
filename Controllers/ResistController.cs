@@ -16,41 +16,46 @@ namespace Resist.Controllers
         // for now we're hardcoding players
         static readonly int SpyCount = 2;
 
+        private readonly ResistContext _context;
+
+        public ResistController(ResistContext context)
+        {
+            _context = context;
+        }
+
         static Random random = new Random();
 
         [HttpPost("[action]")]
         public async Task<IActionResult> StartGame([FromBody] List<int> UserIds)
         {
-            using (var dbContext = new ResistContext())
+            Game newGame = new Game()
             {
-                Game newGame = new Game()
+                Status = GameStatus.Active
+            };
+            await _context.Games.AddAsync(newGame);
+            await _context.SaveChangesAsync();
+            List<GameUser> newPlayers = new List<GameUser>();
+
+            foreach(int userId in UserIds) {
+                // We're starting by creating all the necessary instances
+                // setting their role to resistance then will randomly select 2 to be spys
+                GameUser player = new GameUser()
                 {
-                    Status = GameStatus.Active
+                    UserId = userId,
+                    GameId = newGame.GameId,
+                    Role = RoleType.Resistance
                 };
-                await dbContext.Games.AddAsync(newGame);
-                await dbContext.SaveChangesAsync();
-                List<GameUser> newPlayers = new List<GameUser>();
 
-                foreach(int userId in UserIds) {
-                    // We're starting by creating all the necessary instances
-                    // setting their role to resistance then will randomly select 2 to be spys
-                    GameUser player = new GameUser()
-                    {
-                        UserId = userId,
-                        GameId = newGame.GameId,
-                        Role = RoleType.Resistance
-                    };
-
-                    newPlayers.Add(player);
-                }
-
-                // Mutates users - picks the spys
-                SelectSpys(newPlayers);
-                await dbContext.GameUsers.AddRangeAsync(newPlayers);
-                await dbContext.SaveChangesAsync();
-
-                return Json(new { GameId = newGame.GameId });
+                await _context.GameUsers.AddAsync(player);
+                newPlayers.Add(player);
             }
+
+            // Mutates users - picks the spys
+            SelectSpys(newPlayers);
+            // await _context.GameUsers.AddAsync(newPlayers);
+            await _context.SaveChangesAsync();
+
+            return Json(new { GameId = newGame.GameId });
         }
 
         protected void SelectSpys(List<GameUser> players)

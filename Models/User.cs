@@ -10,6 +10,6 @@ namespace Resist.Models
     {
       public int UserId { get; set; }
       public string Username { get; set; }
-      public List<GameUser> GameUsers { get; set; }
+      public ICollection<GameUser> GameUsers { get; set; }
     }
 }

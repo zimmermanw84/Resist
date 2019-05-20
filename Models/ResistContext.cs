@@ -26,7 +26,7 @@ namespace Resist.Models
 
             modelBuilder.Entity<User>().HasKey( i => i.UserId );
             modelBuilder.Entity<Game>().HasKey( i => i.GameId );
-            modelBuilder.Entity<GameUser>().HasKey( i => i.GameUserId );
+            modelBuilder.Entity<GameUser>().HasKey( gu => new { gu.GameId, gu.UserId } );
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Username)
@@ -40,14 +40,24 @@ namespace Resist.Models
             modelBuilder.Entity<User>()
                 .HasMany(u => u.GameUsers);
 
-            modelBuilder.Entity<GameUser>()
-                .HasOne(u => u.User);
+            // modelBuilder.Entity<GameUser>()
+            //     .HasOne(u => u.User);
 
             modelBuilder.Entity<GameUser>()
-                .HasOne(u => u.Game);
+                .HasOne(u => u.User)
+                .WithMany(gu => gu.GameUsers)
+                .HasForeignKey(gu => gu.GameId);
+
+            modelBuilder.Entity<GameUser>()
+                .HasOne(u => u.User)
+                .WithMany(gu => gu.GameUsers)
+                .HasForeignKey(gu => gu.UserId);
+
+            modelBuilder.Entity<Game>()
+                .HasMany(g => g.GameUsers)
+                .WithOne(gu => gu.Game);
 
             // modelBuilder.Entity<Game>().HasKey( i => i.GameId );
-
             // FOR THE MANY TO MANY WILL NEED A JOIN MODEL :(
             // modelBuilder.Entity<GameUser>()
             //     .HasMany<Mission>(gu => gu.Missions)

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resist.Models
 {
     public enum GameStatus
     {
-      Active,
-      Complete,
+      Active = 1,
+      Complete = 2,
     }
     public class Game
     {
@@ -15,6 +16,6 @@ namespace Resist.Models
 
       public GameStatus Status { get; set; }
 
-      public List<GameUser> GameUsers { get; set; }
+      public ICollection<GameUser> GameUsers { get; set; }
     }
 }
