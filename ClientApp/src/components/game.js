@@ -5,22 +5,15 @@ import { Provider, Subscribe } from 'unstated';
 
 
 
-// const Players = () => {
-//   return (
-//     <Subscribe to={[ usersContainer ]}>
-
-//     </Subscribe>
-//   )
-// }
 
 export default class Game extends Component {
   render() {
     return (
       <div>
         HELLO
-      {/* <Provider> */}
-        {/* <Players /> */}
-      {/* </Provider> */}
+      {/* <Provider>
+        <Players />
+      </Provider> */}
       </div>
     )
   }

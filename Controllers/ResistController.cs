@@ -46,19 +46,17 @@ namespace Resist.Controllers
                     Role = RoleType.Resistance
                 };
 
-                await _context.GameUsers.AddAsync(player);
                 newPlayers.Add(player);
             }
 
-            // Mutates users - picks the spys
-            SelectSpys(newPlayers);
-            // await _context.GameUsers.AddAsync(newPlayers);
+            List<GameUser> updateUsersWithRoles = SelectSpys(newPlayers);
+            await _context.GameUsers.AddRangeAsync(updateUsersWithRoles);
             await _context.SaveChangesAsync();
 
             return Json(new { GameId = newGame.GameId });
         }
 
-        protected void SelectSpys(List<GameUser> players)
+        protected List<GameUser> SelectSpys(List<GameUser> players)
         {
             int spyCount = SpyCount;
             while (spyCount != 0)
@@ -70,6 +68,8 @@ namespace Resist.Controllers
                     spyCount--;
                 }
             }
+            // should make a new collection probably
+            return players;
         }
     }
 }
