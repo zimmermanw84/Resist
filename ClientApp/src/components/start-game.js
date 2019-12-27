@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { ListGroup, Form, Button } from 'react-bootstrap';
-import UsersContainer from "../store/users";
+import { FormGroup, Form, Button } from 'react-bootstrap';
+import getUsersContainerInstance from "../store/users";
 import { Provider, Subscribe } from 'unstated';
 import { Link } from "react-router-dom";
 
-const usersContainer = new UsersContainer();
+const usersContainer = getUsersContainerInstance();
 
 class CreateUser extends Component {
   constructor() {
@@ -29,7 +29,8 @@ class CreateUser extends Component {
       {users => (
           <Form onSubmit={(e) => this.handleSubmit(users, e)}>
             <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>Username</Form.Label>
+              {/* Add Validation */}
               <Form.Control placeholder="Enter username" value={this.state.username} onChange={((e) => this.setUsername(e))} />
             </Form.Group>
             <Button variant="danger" type="submit">Add</Button>
@@ -53,9 +54,10 @@ class CreateGameUsersList extends Component {
   }
 
   async selectUser(e) {
-    e.preventDefault();
     const { userid } =  e.currentTarget.dataset;
-    await usersContainer.selectUser(userid);
+    // when we store the user id on the dom it is cast to a string
+    // honestly I am guessing we don't even have to do this lol
+    await usersContainer.selectUser(Number(userid));
   }
 
   render() {
@@ -68,28 +70,34 @@ class CreateGameUsersList extends Component {
                 Select {users.state.selectedUserIds.length}/5 Players selected.
               </Form.Text>
 
-              <Button key={users.state.gameId} variant="danger" disabled={users.state.selectedUserIds.length !== 5 && users.state.gameId}>
-                <Link to={`/game/${users.state.gameId}`}>Start</Link>
-              </Button>
+              {users.state.selectedUserIds.length === 5 && users.state.gameId &&
+                <Button key={users.state.gameId} variant="danger">
+                  <Link to={`/game/${users.state.gameId}`}>Start</Link>
+                </Button>
+              }
+              <FormGroup>
+              {users.state.users.map && users.state.selectedUserIds.map && users.state.users.map(user => {
+                    return (
+                      <Form.Check
+                        type='radio'
+                        key={user.userId}
+                        id={user.userId}
+                        >
+                        <Form.Check.Input
+                          type='radio'
+                          key={user.userId}
+                          onChange={(e) => this.selectUser(e)}
+                          data-userid={user.userId}
+                          checked={users.state.selectedUserIds.includes(user.userId)}
+                        />
+                        <Form.Check.Label>{user.username}</Form.Check.Label>
+                      </Form.Check>
+                    )
+                  }
+                )
+              }
+              </FormGroup>
             </Form>
-            <ListGroup>
-            {users.state.users.map && users.state.selectedUserIds.map && users.state.users.map(user => {
-                  return (
-                    <ListGroup.Item
-                      style={{color:"black"}}
-                      key={user.userId}
-                      onClick={(e) => this.selectUser(e)}
-                      data-userid={user.userId}
-                      // TODO: come back to this
-                      // show selected user
-                      // active={users.state.selectedUserIds.includes(user.userId)}
-                      >{user.username}
-                    </ListGroup.Item>
-                  )
-                }
-              )
-            }
-            </ListGroup>
           </div>
         )}
       </Subscribe>

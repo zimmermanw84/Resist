@@ -14,7 +14,7 @@ namespace Resist.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // TODO: Move somewhere else based on environment
-            string connectionString = "Host=localhost;Database=resist";
+            string connectionString = "Host=127.0.0.1;Database=resist;Username=walt;Password=password;Port=5433";
             optionsBuilder.UseNpgsql(connectionString);
         }
 
@@ -26,7 +26,8 @@ namespace Resist.Models
 
             modelBuilder.Entity<User>().HasKey( i => i.UserId );
             modelBuilder.Entity<Game>().HasKey( i => i.GameId );
-            modelBuilder.Entity<GameUser>().HasKey( gu => new { gu.GameId, gu.UserId } );
+            modelBuilder.Entity<GameUser>().HasKey( i => i.GameUserId );
+            modelBuilder.Entity<GameUser>().HasAlternateKey( gu => new { gu.GameId, gu.UserId } );
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Username)
@@ -40,8 +41,8 @@ namespace Resist.Models
             modelBuilder.Entity<User>()
                 .HasMany(u => u.GameUsers);
 
-            // modelBuilder.Entity<GameUser>()
-            //     .HasOne(u => u.User);
+            modelBuilder.Entity<GameUser>()
+                .HasOne(u => u.User);
 
             modelBuilder.Entity<GameUser>()
                 .HasOne(u => u.User)
@@ -57,7 +58,6 @@ namespace Resist.Models
                 .HasMany(g => g.GameUsers)
                 .WithOne(gu => gu.Game);
 
-            // modelBuilder.Entity<Game>().HasKey( i => i.GameId );
             // FOR THE MANY TO MANY WILL NEED A JOIN MODEL :(
             // modelBuilder.Entity<GameUser>()
             //     .HasMany<Mission>(gu => gu.Missions)

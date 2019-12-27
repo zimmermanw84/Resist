@@ -21,6 +21,10 @@ class UsersContainer extends Container {
     return users;
   }
 
+  userIsSelected = (userId) => {
+    return this.state.selectedUserIds.includes(userId);
+  }
+
   selectUser = async (userId) => {
     if (this.state.selectedUserIds.includes(userId)) {
       // remove if it's included alread for toggling
@@ -43,22 +47,34 @@ class UsersContainer extends Container {
       selectedUserIds: this.state.selectedUserIds.concat([userId])
     });
 
-    // if we're full after we added then let's get started
+    // // if we're full after we added then let's get started
     if (this.state.selectedUserIds.length === MAX_PLAYERS) {
       // Mainly because we need to route to the game
-      await this.startGame();
+      await this.createGame();
     }
   }
 
-  startGame = async () => {
+  createGame = async () => {
     if (this.state.selectedUserIds.length !== MAX_PLAYERS) {
       // should never make it here due to UI
       throw new Error("Not enough players to start");
     }
 
     const { gameId } = await HttpUtil.postData(`${RESIST_ENDPOINT}/StartGame`, this.state.selectedUserIds.map(i => Number(i)));
+    console.log("gameId", gameId)
     await this.setState({ ...this.state, gameId });
   }
 }
 
-export default UsersContainer;
+// We only want the state containers to be initialized once per app
+// there are better abstractions but this is a toy and we can clean this
+// up later
+let usersContainerInstance;
+
+export default function getUsersContainerInstance() {
+  if (!usersContainerInstance) {
+    usersContainerInstance = new UsersContainer();
+  }
+
+  return usersContainerInstance;
+}

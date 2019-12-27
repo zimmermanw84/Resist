@@ -4,7 +4,8 @@ export const GAME_ENDPOINT = '/api/games';
 
 class GameContainer extends Container {
   // set inital state
-  state = { games: [] };
+  state = { games: [], activeGames: [] };
+
 
   getActiveGames = async () => {
     const { games } = await HttpUtil.get(GAME_ENDPOINT + "?status=Active");
