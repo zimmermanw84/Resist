@@ -21,12 +21,12 @@ class UsersContainer extends Container {
     return users;
   }
 
-  userIsSelected = (userId) => {
+  isUserSelected = (userId) => {
     return this.state.selectedUserIds.includes(userId);
   }
 
   selectUser = async (userId) => {
-    if (this.state.selectedUserIds.includes(userId)) {
+    if (this.isUserSelected(userId)) {
       // remove if it's included alread for toggling
       await this.setState({
         ...this.state,

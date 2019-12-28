@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
-import { FormGroup, Form, Button } from 'react-bootstrap';
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  InputGroup,
+} from 'react-bootstrap';
 import getUsersContainerInstance from "../store/users";
 import { Provider, Subscribe } from 'unstated';
 import { Link } from "react-router-dom";
+import { JumboHeader } from "../App";
 
 const usersContainer = getUsersContainerInstance();
 
@@ -18,7 +25,7 @@ class CreateUser extends Component {
   }
 
   handleSubmit(users, e) {
-    e.preventDefault();
+    // kind janky should be a submit event but there's an issue with the inputgroup.prepend component
     users.addUser(this.state.username);
     this.setState({username: ""})
   }
@@ -27,13 +34,18 @@ class CreateUser extends Component {
     return (
       <Subscribe to={[ usersContainer ]}>
       {users => (
-          <Form onSubmit={(e) => this.handleSubmit(users, e)}>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Username</Form.Label>
-              {/* Add Validation */}
-              <Form.Control placeholder="Enter username" value={this.state.username} onChange={((e) => this.setUsername(e))} />
-            </Form.Group>
-            <Button variant="danger" type="submit">Add</Button>
+          <Form as={Col}>
+            <InputGroup.Text as={Row} style={{backgroundColor: "white", border: "none"}} className="mb-3">
+              Add User
+            </InputGroup.Text>
+            <Form.Row>
+              <InputGroup md="8" as={Col}>
+                <Form.Control placeholder="Enter username" value={this.state.username} onChange={((e) => this.setUsername(e))} />
+                <InputGroup.Prepend>
+                  <Button onClick={(e) => this.handleSubmit(users, e)} variant="primary" type="submit">Add</Button>
+                </InputGroup.Prepend>
+              </InputGroup>
+            </Form.Row>
           </Form>
       )}
       </Subscribe>
@@ -65,40 +77,35 @@ class CreateGameUsersList extends Component {
       <Subscribe to={[ usersContainer ]}>
         {(users) => (
           <div>
-            <Form>
-              <Form.Text className="text-muted">
+            <InputGroup>
+              <InputGroup.Text style={{backgroundColor: "white", border: "none"}} className="mb-3">
                 Select {users.state.selectedUserIds.length}/5 Players selected.
-              </Form.Text>
+              </InputGroup.Text>
 
               {users.state.selectedUserIds.length === 5 && users.state.gameId &&
-                <Button key={users.state.gameId} variant="danger">
-                  <Link to={`/game/${users.state.gameId}`}>Start</Link>
+              <InputGroup className="mb-3">
+                <Button key={users.state.gameId} variant="primary">
+                  <Link style={{ color: "white" }} to={`/game/${users.state.gameId}`}>Start</Link>
                 </Button>
+              </InputGroup>
               }
-              <FormGroup>
+
               {users.state.users.map && users.state.selectedUserIds.map && users.state.users.map(user => {
-                    return (
-                      <Form.Check
-                        type='radio'
-                        key={user.userId}
+                  return (
+                    <InputGroup className="mb-3" key={user.userId}>
+                      <InputGroup.Radio
                         id={user.userId}
-                        >
-                        <Form.Check.Input
-                          type='radio'
-                          key={user.userId}
-                          onChange={(e) => this.selectUser(e)}
-                          data-userid={user.userId}
-                          checked={users.state.selectedUserIds.includes(user.userId)}
+                        onClick={(e) => this.selectUser(e)}
+                        data-userid={user.userId}
+                        checked={users.isUserSelected(user.userId)}
                         />
-                        <Form.Check.Label>{user.username}</Form.Check.Label>
-                      </Form.Check>
-                    )
-                  }
-                )
-              }
-              </FormGroup>
-            </Form>
-          </div>
+                        <InputGroup.Text style={{backgroundColor: "white", border: "none"}} key={user.username}>{user.username}</InputGroup.Text>
+                    </InputGroup>
+                  )
+                }
+              )}
+            </InputGroup>
+        </div>
         )}
       </Subscribe>
     )
@@ -109,8 +116,15 @@ export default class StartGame extends Component {
   render() {
     return (
       <Provider>
-        <CreateUser />
-        <CreateGameUsersList />
+        <JumboHeader />
+        <Row>
+          <Col>
+            <CreateUser />
+          </Col>
+          <Col>
+            <CreateGameUsersList />
+          </Col>
+        </Row>
       </Provider>
     )
   }
