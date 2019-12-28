@@ -29,8 +29,6 @@ namespace Resist.Models
         public IActionResult Show(int id)
         {
             var game = _context.Games
-                .Include(g => g.GameUsers)
-                    .ThenInclude(gu => gu.User)
                 .Where(g => g.GameId == id)
                 .ToList();
 
@@ -40,6 +38,28 @@ namespace Resist.Models
             }
 
             return Json(game);
+        }
+
+
+        [HttpGet("[action]/{id}")]
+        public IActionResult CurrentGame(int id)
+        {
+            var gameCollection = _context.Games
+                .Include(g => g.GameUsers)
+                    .ThenInclude(gu => gu.User)
+                .Where(g => g.GameId == id)
+                .ToList();
+
+            if (gameCollection.Count == 0)
+            {
+                return NotFound();
+            }
+
+            // var game = new {
+            //     users = gameCollection.Select(o => o.GameUsers)
+            // };
+
+            return Json(gameCollection);
         }
 
 
