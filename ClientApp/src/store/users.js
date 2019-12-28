@@ -61,7 +61,6 @@ class UsersContainer extends Container {
     }
 
     const { gameId } = await HttpUtil.postData(`${RESIST_ENDPOINT}/StartGame`, this.state.selectedUserIds.map(i => Number(i)));
-    console.log("gameId", gameId)
     await this.setState({ ...this.state, gameId });
   }
 }

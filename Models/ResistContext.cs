@@ -38,8 +38,8 @@ namespace Resist.Models
                 .HasAlternateKey(u => u.Username)
                 .HasName("Unique_Usernam");
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.GameUsers);
+            // modelBuilder.Entity<User>()
+            //     .HasMany(u => u.GameUsers);
 
             modelBuilder.Entity<GameUser>()
                 .HasOne(u => u.User);
