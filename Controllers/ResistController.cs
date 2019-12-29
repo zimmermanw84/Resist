@@ -44,15 +44,16 @@ namespace Resist.Controllers
                 {
                     UserId = userId,
                     GameId = newGame.GameId,
-                    Role = RoleType.Resistance
+                    Role = RoleType.Resistance,
                 };
 
                 newPlayers.Add(player);
             }
             var GameConfig = Game.Config(UserIds.Count());
 
-            List<GameUser> updateUsersWithRoles = SelectSpys(newPlayers, GameConfig.SpyCount);
-            await _context.GameUsers.AddRangeAsync(updateUsersWithRoles);
+            List<GameUser> updatedUsersWithRoles = SelectSpys(newPlayers, GameConfig.SpyCount);
+            List<GameUser> updatedUsersWithPosition = AssignPosition(updatedUsersWithRoles);
+            await _context.GameUsers.AddRangeAsync(updatedUsersWithPosition);
             await _context.SaveChangesAsync();
 
             List<Mission> newMissions = new List<Mission>();
@@ -74,6 +75,24 @@ namespace Resist.Controllers
             return Json(new { GameId = newGame.GameId });
         }
 
+        // Assign a sudo random position (basically turn order)
+        // there's better ways to do these - works for first pass
+        protected List<GameUser> AssignPosition(List<GameUser> players)
+        {
+            int playerCount = players.Count;
+            int position = 1;
+            while (playerCount != 0)
+            {
+                GameUser player = players[random.Next(players.Count)];
+                if (player.Position == 0)
+                {
+                    player.Position = position++;
+                    playerCount--;
+                }
+            }
+
+            return players;
+        }
         protected List<GameUser> SelectSpys(List<GameUser> players, int spyCount)
         {
             while (spyCount != 0)
