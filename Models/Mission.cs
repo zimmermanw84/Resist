@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using Newtonsoft.Json;
 using Resist.Models;
 
 namespace Resist.Models
@@ -18,8 +18,13 @@ namespace Resist.Models
 
     public MissionStatus Status { get; set; }
 
+    public int MissionNumber { get; set; }
     public int GameId { get; set; }
 
-    public virtual ICollection<GameUser> GameUsers { get; set; }
+    [JsonIgnore]
+    public virtual Game Game { get; set; }
+
+    [JsonIgnore]
+    public virtual ICollection<GameUserMission> GameUserMissions { get; set; }
   }
 }

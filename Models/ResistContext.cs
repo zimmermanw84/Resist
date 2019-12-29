@@ -10,7 +10,7 @@ namespace Resist.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<GameUser> GameUsers { get; set; }
-        // public DbSet<Mission> Missions { get; set; }
+        public DbSet<Mission> Missions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // TODO: Move somewhere else based on environment
@@ -23,11 +23,16 @@ namespace Resist.Models
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<Game>().ToTable("Game");
             modelBuilder.Entity<GameUser>().ToTable("GameUser");
+            modelBuilder.Entity<Mission>().ToTable("Mission");
+            modelBuilder.Entity<GameUserMission>().ToTable("GameUserMission");
 
             modelBuilder.Entity<User>().HasKey( i => i.UserId );
             modelBuilder.Entity<Game>().HasKey( i => i.GameId );
+            modelBuilder.Entity<Mission>().HasKey( i => i.MissionId );
             modelBuilder.Entity<GameUser>().HasKey( i => i.GameUserId );
             modelBuilder.Entity<GameUser>().HasAlternateKey( gu => new { gu.GameId, gu.UserId } );
+            modelBuilder.Entity<GameUserMission>().HasKey( i => i.GameUserMissionId );
+            modelBuilder.Entity<GameUserMission>().HasAlternateKey( gu => new { gu.GameUserId, gu.MissionId } );
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Username)
@@ -58,10 +63,20 @@ namespace Resist.Models
                 .HasMany(g => g.GameUsers)
                 .WithOne(gu => gu.Game);
 
-            // FOR THE MANY TO MANY WILL NEED A JOIN MODEL :(
-            // modelBuilder.Entity<GameUser>()
-            //     .HasMany<Mission>(gu => gu.Missions)
-            //     .WithMany()
+            modelBuilder.Entity<GameUserMission>()
+                .HasOne(u => u.GameUser)
+                .WithMany(gu => gu.GameUserMissions)
+                .HasForeignKey(gu => gu.GameUserId);
+
+            modelBuilder.Entity<GameUserMission>()
+                .HasOne(u => u.Mission)
+                .WithMany(gu => gu.GameUserMissions)
+                .HasForeignKey(gu => gu.MissionId);
+
+            modelBuilder.Entity<Mission>()
+                .HasOne(m => m.Game)
+                .WithMany(g => g.Missions)
+                .HasForeignKey(m => m.GameId);
         }
     }
 }

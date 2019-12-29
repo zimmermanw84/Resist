@@ -45,6 +45,7 @@ namespace Resist.Models
         public IActionResult CurrentGame(int id)
         {
             var gameCollection = _context.Games
+                .Include(g => g.Missions)
                 .Include(g => g.GameUsers)
                     .ThenInclude(gu => gu.User)
                 .Where(g => g.GameId == id)
