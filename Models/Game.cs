@@ -16,7 +16,7 @@ namespace Resist.Models
 
       public GameStatus Status { get; set; }
 
-      public ICollection<GameUser> GameUsers { get; set; }
+      public virtual ICollection<GameUser> GameUsers { get; set; }
 
       public static GameConfig Config(int playerCount)
       {

@@ -3,12 +3,14 @@ import HttpUtil from './http-util';
 export const USERS_ENDPOINT = '/api/users';
 export const RESIST_ENDPOINT = '/api/resist';
 
-// later this will be configurable
-const MAX_PLAYERS = 5;
 
 class UsersContainer extends Container {
   // set inital state
   state = { users: [], selectedUserIds: [], gameId: null };
+  // might send this over the wire later
+  MAX_PLAYERS = 7;
+  MIN_PLAYERS = 5;
+
 
   addUser = async (username) => {
     await HttpUtil.postData(USERS_ENDPOINT, { username });
@@ -36,28 +38,23 @@ class UsersContainer extends Container {
       return;
     }
 
-    if (this.state.selectedUserIds.length === MAX_PLAYERS) {
-      // should never get here
-      return;
-    }
-
     // add user otherwise
     await this.setState({
       ...this.state,
       selectedUserIds: this.state.selectedUserIds.concat([userId])
     });
+  }
 
-    // // if we're full after we added then let's get started
-    if (this.state.selectedUserIds.length === MAX_PLAYERS) {
-      // Mainly because we need to route to the game
-      await this.createGame();
-    }
+  canCreateGame = () => {
+    const selectedPlayerCount = this.state.selectedUserIds.length;
+    return (selectedPlayerCount <= this.MAX_PLAYERS &&
+      selectedPlayerCount >= this.MIN_PLAYERS);
   }
 
   createGame = async () => {
-    if (this.state.selectedUserIds.length !== MAX_PLAYERS) {
+    if (!this.canCreateGame()) {
       // should never make it here due to UI
-      throw new Error("Not enough players to start");
+      throw new Error("Incorrect amount of players");
     }
 
     const { gameId } = await HttpUtil.postData(`${RESIST_ENDPOINT}/StartGame`, this.state.selectedUserIds.map(i => Number(i)));

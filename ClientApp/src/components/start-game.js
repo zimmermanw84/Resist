@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap';
 import getUsersContainerInstance from "../store/users";
 import { Provider, Subscribe } from 'unstated';
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { JumboHeader } from "../App";
 
 const usersContainer = getUsersContainerInstance();
@@ -72,20 +72,29 @@ class CreateGameUsersList extends Component {
     await usersContainer.selectUser(Number(userid));
   }
 
+  async createGame(e) {
+    await usersContainer.createGame();
+  }
+
   render() {
     return (
       <Subscribe to={[ usersContainer ]}>
         {(users) => (
           <div>
+            {
+              // if game is created start the game
+              users.state.gameId &&
+              <Redirect to={`/game/${usersContainer.state.gameId}`}/>
+            }
             <InputGroup>
               <InputGroup.Text style={{backgroundColor: "white", border: "none"}} className="mb-3">
-                Select {users.state.selectedUserIds.length}/5 Players selected.
+                {users.state.selectedUserIds.length} Players selected. (Select 5-7 players)
               </InputGroup.Text>
 
-              {users.state.selectedUserIds.length === 5 && users.state.gameId &&
+              {usersContainer.canCreateGame() &&
               <InputGroup className="mb-3">
-                <Button key={users.state.gameId} variant="primary">
-                  <Link style={{ color: "white" }} to={`/game/${users.state.gameId}`}>Start</Link>
+                <Button key={users.state.gameId} onClick={(e) => this.createGame(e)} variant="primary">
+                  Start
                 </Button>
               </InputGroup>
               }

@@ -55,11 +55,9 @@ namespace Resist.Models
                 return NotFound();
             }
 
-            // var game = new {
-            //     users = gameCollection.Select(o => o.GameUsers)
-            // };
+            Game.GameConfig config = Game.Config(gameCollection.SelectMany(g => g.GameUsers).Count());
 
-            return Json(gameCollection);
+            return Json(new { game = gameCollection.First(), gameConfig = config });
         }
 
 
