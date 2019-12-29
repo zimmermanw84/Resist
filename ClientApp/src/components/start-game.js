@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap';
 import getUsersContainerInstance from "../store/users";
 import { Provider, Subscribe } from 'unstated';
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { JumboHeader } from "../App";
 
 const usersContainer = getUsersContainerInstance();

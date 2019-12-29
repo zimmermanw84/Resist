@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-// import { ListGroup, Form, Button } from 'react-bootstrap';
 import getCurrentGameContainerInstance from "../store/current-game";
-import { Provider, Subscribe } from 'unstated';
+import { Provider } from 'unstated';
+import ShowPlayersRoles from './show-players-roles';
 
 const currentGameContainer = getCurrentGameContainerInstance();
 
@@ -23,16 +23,7 @@ export default class Game extends Component {
     return (
       <div>
         <Provider>
-          <div>
-            HELLO
-          <Subscribe to={[ currentGameContainer ]}>
-            {(currentGame) => (
-              <div>
-                {currentGame.state.game.gameId}
-              </div>
-            )}
-          </Subscribe>
-          </div>
+          <ShowPlayersRoles />
         </Provider>
       </div>
     )

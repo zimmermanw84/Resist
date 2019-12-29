@@ -12,9 +12,19 @@ class CurrentGameContainer extends Container {
   };
 
   getCurrentGame = async (id) => {
-    const game = await HttpUtil.get(GAME_ENDPOINT + "/CurrentGame/" + id);
-    console.log("GAME", game);
-    await this.setState({ ...this.state, game });
+    const { game, config } = await HttpUtil.get(GAME_ENDPOINT + "/CurrentGame/" + id);
+    await this.setState({
+      ...this.state,
+      game,
+      users: game.gameUsers.sort((a, b) => a.position - b.position),
+      missions: game.missions,
+      config,
+    });
+    console.log("STATE", this.state);
+  }
+
+  findUserByPosition(position) {
+    return this.state.users[position];
   }
 }
 

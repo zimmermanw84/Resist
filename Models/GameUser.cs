@@ -15,6 +15,7 @@ namespace Resist.Models
     {
       public int GameUserId { get; set; }
       public RoleType Role { get; set; }
+      public int Position { get; set; }
       public int UserId { get; set; }
       public int GameId { get; set; }
       public virtual User User { get; set; }
