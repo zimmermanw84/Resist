@@ -20,6 +20,8 @@ namespace Resist.Models
       public virtual User User { get; set; }
       [JsonIgnore]
       public virtual Game Game { get; set; }
-      // public virtual ICollection<Mission> Missions { get; set; }
+
+      [JsonIgnore]
+      public virtual ICollection<GameUserMission> GameUserMissions { get; set; }
     }
 }

@@ -12,10 +12,6 @@ namespace Resist.Controllers
     [Route("api/[controller]")]
     public class ResistController : Controller
     {
-        // Later we'll make this dynamic
-        // for now we're hardcoding players
-        static readonly int SpyCount = 2;
-
         private readonly ResistContext _context;
 
         public ResistController(ResistContext context)
@@ -25,6 +21,10 @@ namespace Resist.Controllers
 
         static Random random = new Random();
 
+        ///
+        /// This action scaffolds the entire game and all it's relationships
+        /// will need to clean this up
+        ///
         [HttpPost("[action]")]
         public async Task<IActionResult> StartGame([FromBody] List<int> UserIds)
         {
@@ -34,6 +34,7 @@ namespace Resist.Controllers
             };
             await _context.Games.AddAsync(newGame);
             await _context.SaveChangesAsync();
+            // create players
             List<GameUser> newPlayers = new List<GameUser>();
 
             foreach(int userId in UserIds) {
@@ -48,17 +49,33 @@ namespace Resist.Controllers
 
                 newPlayers.Add(player);
             }
+            var GameConfig = Game.Config(UserIds.Count());
 
-            List<GameUser> updateUsersWithRoles = SelectSpys(newPlayers);
+            List<GameUser> updateUsersWithRoles = SelectSpys(newPlayers, GameConfig.SpyCount);
             await _context.GameUsers.AddRangeAsync(updateUsersWithRoles);
+            await _context.SaveChangesAsync();
+
+            List<Mission> newMissions = new List<Mission>();
+            // create missions (we always create 5 missions with no users associated)
+            foreach(int missionNum in new List<int>() { 1, 2, 3, 4, 5 })
+            {
+                Mission mission = new Mission()
+                {
+                    MissionNumber = missionNum,
+                    GameId = newGame.GameId,
+                    Status = MissionStatus.Pending,
+                };
+
+                newMissions.Add(mission);
+            }
+            await _context.Missions.AddRangeAsync(newMissions);
             await _context.SaveChangesAsync();
 
             return Json(new { GameId = newGame.GameId });
         }
 
-        protected List<GameUser> SelectSpys(List<GameUser> players)
+        protected List<GameUser> SelectSpys(List<GameUser> players, int spyCount)
         {
-            int spyCount = SpyCount;
             while (spyCount != 0)
             {
                 GameUser spy = players[random.Next(players.Count)];
