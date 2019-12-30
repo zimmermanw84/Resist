@@ -91,13 +91,11 @@ class CreateGameUsersList extends Component {
                 {users.state.selectedUserIds.length} Players selected. (Select 5-7 players)
               </InputGroup.Text>
 
-              {usersContainer.canCreateGame() &&
               <InputGroup className="mb-3">
-                <Button key={users.state.gameId} onClick={(e) => this.createGame(e)} variant="primary">
+                <Button disabled={!usersContainer.canCreateGame()} key={users.state.gameId} onClick={(e) => this.createGame(e)} variant="primary">
                   Start
                 </Button>
               </InputGroup>
-              }
 
               {users.state.users.map && users.state.selectedUserIds.map && users.state.users.map(user => {
                   return (

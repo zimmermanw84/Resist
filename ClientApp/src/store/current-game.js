@@ -20,11 +20,6 @@ class CurrentGameContainer extends Container {
       missions: game.missions,
       config,
     });
-    console.log("STATE", this.state);
-  }
-
-  findUserByPosition(position) {
-    return this.state.users[position];
   }
 }
 
