@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import getCurrentGameContainerInstance from "../store/current-game";
 import { Provider } from 'unstated';
 import ShowPlayersRoles from './show-players-roles';
+import NightPhase from './night-phase';
 
 const currentGameContainer = getCurrentGameContainerInstance();
 
-
-export default class Game extends Component {
+export default class PreGame extends Component {
   constructor() {
     super(...arguments);
 
@@ -16,7 +16,9 @@ export default class Game extends Component {
   async componentDidMount() {
     const { id } = this.props.match.params;
     // load inital state
-    await currentGameContainer.getCurrentGame(id);
+    if (!currentGameContainer.isLoaded) {
+      await currentGameContainer.getCurrentGame(id);
+    }
   }
 
   render() {
@@ -24,6 +26,7 @@ export default class Game extends Component {
       <div>
         <Provider>
           <ShowPlayersRoles />
+          <NightPhase />
         </Provider>
       </div>
     )
