@@ -7,7 +7,15 @@ const currentGameContainer = getCurrentGameContainerInstance();
 
 const PlayerRole = ({user}) => {
   let [viewRole, setViewRole] = useState(false);
-  
+
+  let cardText;
+  if (viewRole) {
+    cardText = <Card.Text>{user.role}</Card.Text>
+  }
+  else {
+    cardText = <Card.Text>XXXXXXXXXXXXXX</Card.Text>
+  }
+
   return (
     <div>
       <Card bg="dark" text="white" style={{ width: '18rem' }}>
@@ -16,16 +24,7 @@ const PlayerRole = ({user}) => {
         <Card.Title>
           <Button onClick={(e) => setViewRole(!viewRole)} variant="danger">{viewRole ? "Hide" : "Show"} Role</Button>
         </Card.Title>
-        {viewRole &&
-          <Card.Text>
-            {user.role}
-          </Card.Text>
-        }
-        {!viewRole &&
-          <Card.Text>
-            XXXXXXXXXXXXXX
-          </Card.Text>
-        }
+        {cardText}
       </Card.Body>
       </Card>
     </div>
@@ -44,8 +43,6 @@ export default class ShowPlayersRoles extends Component {
 
   selectItem(e) {
     const { targetposition } =  e.currentTarget.dataset;
-    console.log("TARGET POSITION", e.currentTarget.dataset)
-    console.log("TARGET POSITION", targetposition)
     this.setState({ selectedPosition: targetposition });
   }
 
