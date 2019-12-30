@@ -48,47 +48,55 @@ export default class ShowPlayersRoles extends Component {
     this.setState({ selectedPosition: Number(targetposition) });
   }
 
+  toggleNightPhase(currentGame) {
+    currentGame.toggleNightPhase();
+  }
+
   render() {
     return (
       <Subscribe to={[ currentGameContainer ]}>
       {(currentGame) => (
         <div>
-        {currentGame.state.users && currentGame.state.users.map((user, i) => {
-          return (
-            <div key={user.position}>
-              { this.state.selectedPosition && this.state.selectedPosition === user.position &&
-                <>
-                <PlayerRole user={user} roleIsViewable={this.state.selectedPosition === user.position} />
-                <div className="d-flex flex-column">
-                  <ButtonGroup key={user.gameUserId} className="mt-3">
-                    <Button disabled={1 === user.position} onClick={(e) => this.selectItem(e)} data-targetposition={user.position - 1}>Previous</Button>
-                    <Button disabled={currentGame.state.users.length === user.position} onClick={(e) => this.selectItem(e)} data-targetposition={user.position + 1}>Next</Button>
-                  </ButtonGroup>
-                </div>
-                </>
-              }
+        {currentGame.state.showPlayerRoles &&
+          <div>
+          {currentGame.state.users && currentGame.state.users.map((user, i) => {
+            return (
+              <div key={user.position}>
+                { this.state.selectedPosition && this.state.selectedPosition === user.position &&
+                  <>
+                  <PlayerRole user={user} roleIsViewable={this.state.selectedPosition === user.position} />
+                  <div className="d-flex flex-column">
+                    <ButtonGroup key={user.gameUserId} className="mt-3">
+                      <Button disabled={1 === user.position} onClick={(e) => this.selectItem(e)} data-targetposition={user.position - 1}>Previous</Button>
+                      <Button disabled={currentGame.state.users.length === user.position} onClick={(e) => this.selectItem(e)} data-targetposition={user.position + 1}>Next</Button>
+                    </ButtonGroup>
+                  </div>
+                  </>
+                }
+              </div>
+            )
+          })}
+          {
+            // If last item show night phase button
+            <div className="d-flex flex-column">
+            <ButtonGroup key={currentGame.gameId} className="mt-3">
+              <Button onClick={() => this.toggleNightPhase(currentGame)} disabled={currentGame.state.users.length !== this.state.selectedPosition} variant="danger">Start Night Phase</Button>
+            </ButtonGroup>
             </div>
-          )
-        })}
-        {
-          // If last item show night phase button
-          <div className="d-flex flex-column">
-          <ButtonGroup key={currentGame.gameId} className="mt-3">
-            <Button disabled={currentGame.state.users.length !== this.state.selectedPosition} variant="danger">Start Night Phase</Button>
-          </ButtonGroup>
+          }
+          {currentGame.state.users && currentGame.state.users.map((user, i) => {
+            return (
+              <div className="mt-3" key={user.gameUserId}>
+                <ListGroup as="ul">
+                  <ListGroup.Item as="li" active={i + 1 === this.state.selectedPosition}>
+                    {user.user.username}
+                  </ListGroup.Item>
+                </ListGroup>
+              </div>
+            )
+          })}
           </div>
         }
-        {currentGame.state.users && currentGame.state.users.map((user, i) => {
-          return (
-            <div class="mt-3" key={user.gameUserId}>
-              <ListGroup as="ul">
-                <ListGroup.Item as="li" active={i + 1 === this.state.selectedPosition}>
-                  {user.user.username}
-                </ListGroup.Item>
-              </ListGroup>
-            </div>
-          )
-        })}
       </div>
       )}
       </Subscribe>

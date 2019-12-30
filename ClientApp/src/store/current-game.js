@@ -6,10 +6,29 @@ class CurrentGameContainer extends Container {
   // set inital state
   state = {
     game: [],
-    config: [],
+    config: {},
     users: [],
-    missions: []
+    missions: [],
+    isLoaded: false,
+
+    showPlayerRoles: true,
+    showNightPhase: false,
   };
+
+  toggleNightPhase = () => {
+    this.setState({
+      ...this.state,
+      showNightPhase: true,
+      showPlayerRoles: false,
+    });
+  }
+
+  completeNightPhase = () => {
+    this.setState({
+      ...this.state,
+      showNightPhase: false,
+    });
+  }
 
   getCurrentGame = async (id) => {
     const { game, config } = await HttpUtil.get(GAME_ENDPOINT + "/CurrentGame/" + id);
@@ -18,6 +37,7 @@ class CurrentGameContainer extends Container {
       game,
       users: game.gameUsers.sort((a, b) => a.position - b.position),
       missions: game.missions,
+      isLoaded: true,
       config,
     });
   }

@@ -84,7 +84,7 @@ class CreateGameUsersList extends Component {
             {
               // if game is created start the game
               users.state.gameId &&
-              <Redirect to={`/game/${usersContainer.state.gameId}`}/>
+              <Redirect to={`/game/${usersContainer.state.gameId}/pre-game`}/>
             }
             <InputGroup>
               <InputGroup.Text style={{backgroundColor: "white", border: "none"}} className="mb-3">

@@ -4,7 +4,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Button, Container, Jumbotron, Nav } from 'react-bootstrap';
 import StartGame from './components/start-game';
-import Game from './components/game';
+import PreGame from './components/pre-game';
+import Play from './components/play';
 import { Provider } from 'unstated';
 
 export function JumboHeader() {
@@ -42,7 +43,8 @@ class App extends Component {
             <Router>
               <Route exact path="/" component={Home} />
               <Route path="/start-game" component={StartGame} />
-              <Route path="/game/:id" component={Game} />
+              <Route path="/game/:id/pre-game" component={PreGame} />
+              <Route path="/game/:id/play" component={Play} />
             </Router>
           </header>
         </Container>
