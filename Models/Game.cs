@@ -34,27 +34,27 @@ namespace Resist.Models
           switch(playerCount)
           {
             case 5:
-              UserCountMisison1 = 2;
-              UserCountMisison2 = 3;
-              UserCountMisison3 = 2;
-              UserCountMisison4 = 3;
-              UserCountMisison5 = 3;
+              UserCountMission1 = 2;
+              UserCountMission2 = 3;
+              UserCountMission3 = 2;
+              UserCountMission4 = 3;
+              UserCountMission5 = 3;
               SpyCount = 2;
               break;
             case 6:
-              UserCountMisison1 = 2;
-              UserCountMisison2 = 3;
-              UserCountMisison3 = 4;
-              UserCountMisison4 = 3;
-              UserCountMisison5 = 4;
+              UserCountMission1 = 2;
+              UserCountMission2 = 3;
+              UserCountMission3 = 4;
+              UserCountMission4 = 3;
+              UserCountMission5 = 4;
               SpyCount = 2;
               break;
             case 7:
-              UserCountMisison1 = 2;
-              UserCountMisison2 = 3;
-              UserCountMisison3 = 3;
-              UserCountMisison4 = 4;
-              UserCountMisison5 = 4;
+              UserCountMission1 = 2;
+              UserCountMission2 = 3;
+              UserCountMission3 = 3;
+              UserCountMission4 = 4;
+              UserCountMission5 = 4;
               SpyCount = 3;
               break;
             default:
@@ -63,11 +63,11 @@ namespace Resist.Models
         }
 
         public int SpyCount { get; set; }
-        public int UserCountMisison1 { get; set; }
-        public int UserCountMisison2 { get; set; }
-        public int UserCountMisison3 { get; set; }
-        public int UserCountMisison4 { get; set; }
-        public int UserCountMisison5 { get; set; }
+        public int UserCountMission1 { get; set; }
+        public int UserCountMission2 { get; set; }
+        public int UserCountMission3 { get; set; }
+        public int UserCountMission4 { get; set; }
+        public int UserCountMission5 { get; set; }
       }
     }
 
