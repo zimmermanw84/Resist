@@ -36,7 +36,7 @@ class CreateUser extends Component {
       {users => (
           <Form as={Col}>
             <InputGroup.Text as={Row} style={{backgroundColor: "white", border: "none"}} className="mb-3">
-              Add User
+              Add Player
             </InputGroup.Text>
             <Form.Row>
               <InputGroup md="8" as={Col}>
@@ -88,30 +88,39 @@ class CreateGameUsersList extends Component {
             }
             <InputGroup>
               <InputGroup.Text style={{backgroundColor: "white", border: "none"}} className="mb-3">
-                {users.state.selectedUserIds.length} Players selected. (Select 5-7 players)
+                {users.state.selectedUserIds.length} Players selected. (Select 5-7 Players)
               </InputGroup.Text>
-
-              <InputGroup className="mb-3">
-                <Button disabled={!usersContainer.canCreateGame()} key={users.state.gameId} onClick={(e) => this.createGame(e)} variant="primary">
-                  Start
-                </Button>
-              </InputGroup>
-
-              {users.state.users.map && users.state.selectedUserIds.map && users.state.users.map(user => {
-                  return (
-                    <InputGroup className="mb-3" key={user.userId}>
-                      <InputGroup.Radio
-                        id={user.userId}
-                        onClick={(e) => this.selectUser(e)}
-                        data-userid={user.userId}
-                        checked={users.isUserSelected(user.userId)}
-                        />
-                        <InputGroup.Text style={{backgroundColor: "white", border: "none"}} key={user.username}>{user.username}</InputGroup.Text>
-                    </InputGroup>
-                  )
-                }
-              )}
             </InputGroup>
+
+              <ul style={{listStyle: "none", padding: "0"}}>
+                <li className="mb-3 d-flex flex-column">
+                  <Button
+                    disabled={!usersContainer.canCreateGame()}
+                    key={users.state.gameId}
+                    onClick={(e) => this.createGame(e)}
+                    variant="danger"
+                    size="lg"
+                  >
+                    Start
+                    </Button>
+                </li>
+                {users.state.users.map && users.state.selectedUserIds.map && users.state.users.map(user => {
+                    return (
+                      <li className="mb-3 d-flex flex-column" key={user.userId}>
+                        <Button
+                          variant={users.isUserSelected(user.userId) ? "primary" : "light"}
+                          size="lg"
+                          onClick={(e) => this.selectUser(e)}
+                          data-userid={user.userId}
+                          block
+                        >
+                          {user.username}
+                        </Button>
+                      </li>
+                    )
+                  }
+                )}
+              </ul>
         </div>
         )}
       </Subscribe>
