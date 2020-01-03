@@ -1,33 +1,85 @@
 import React, { Component } from 'react';
 import getCurrentGameContainerInstance from "../store/current-game";
+import getMissionContainerInstance from "../store/mission";
 import { Provider, Subscribe } from 'unstated';
-import { ListGroup, Accordion, Card, Button } from 'react-bootstrap';
+import { Accordion, Card, Button, Badge } from 'react-bootstrap';
 
 const currentGameContainer = getCurrentGameContainerInstance();
+const missionContainer = getMissionContainerInstance();
 
+const AddGameUserMissionList = ({users, missionId, playerCount}) => {
+  const selectMissionUser = (e, missionContainer) => {
+    const { userid } =  e.currentTarget.dataset;
 
-const AddGameUserMissionList = ({users, missionId}) => {
+    missionContainer.selectMissionUser(Number(userid), missionId);
+  }
+
   return (
-    <div>
-      {users && users.map((user, i) => {
-        return (
-          <div className="mt-3" key={user.gameUserId}>
-            <ListGroup as="ul">
-              <ListGroup.Item as="li" active={false}>
-                {user.user.username}
-              </ListGroup.Item>
-            </ListGroup>
-          </div>
-        )
-      })}
-    </div>
+    <Subscribe to={[ missionContainer ]}>
+      {(missionCont) => (
+        <ul style={{listStyle: "none", padding: "0"}}>
+          {users && users.map((user) => {
+            return (
+              <li className="mb-3 d-flex flex-column">
+                <Button
+                  key={user.userId}
+                  variant={missionCont.isUserSelected(user.userId) ? "primary" : "light"}
+                  size="lg"
+                  onClick={(e) => selectMissionUser(e, missionCont)}
+                  data-userid={user.userId}
+                  disabled={missionCont.state.selectedUserIds.length === playerCount && !missionCont.isUserSelected(user.userId)}
+                >
+                  {user.user.username}
+                  {user.position === missionCont.state.leaderPosition &&
+                    <Badge className="ml-3" variant="success">Leader</Badge>
+                  }
+                </Button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </Subscribe>
   )
 }
 
 
-const Mission = ({users, mission}) => {
+const Mission = ({users, mission, activeMissionNumber, playerCount}) => {
+  // we want pending missions / spy won / resistance won to all be different color
+  const getHeaderStyle = (mission) => {
+    let variant;
+
+    if (mission.status === "Pending") {
+      variant = "info";
+    }
+    else if (mission.status === "Failure") {
+      variant = "danger";
+    }
+    else if (mission.status === "Success") {
+      variant = "primary";
+    }
+
+    return variant;
+  }
+
   return (
-    <AddGameUserMissionList users={users} missionId={mission.missionId}/>
+      <Accordion defaultActiveKey="0">
+      <Card>
+        <Accordion.Toggle
+          as={Button}
+          variant={getHeaderStyle(mission)}
+          eventKey={(activeMissionNumber === mission.missionNumber) ? "0" : "1"}
+          disabled={activeMissionNumber !== mission.missionNumber}
+        >
+          Mission #{mission.missionNumber} - Player Count ({playerCount})
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey={(activeMissionNumber === mission.missionNumber) ? "0" : "1"}>
+        <Card.Body>
+          <AddGameUserMissionList users={users} missionId={mission.missionId} playerCount={playerCount}/>
+        </Card.Body>
+        </Accordion.Collapse>
+      </Card>
+    </Accordion>
   )
 };
 
@@ -37,7 +89,7 @@ export default class Play extends Component {
     super(...arguments);
 
     this.state = {
-      activeMission: 1,
+      activeMissionNumber: 1,
     }
   }
 
@@ -50,7 +102,6 @@ export default class Play extends Component {
   }
 
   render() {
-    // eventKey={this.state.activeMission === mission.missionNumber ? "1" : "0"}>
     return (
       <div>
         <Provider>
@@ -60,18 +111,12 @@ export default class Play extends Component {
                 <div>
                 { currentGame.state.missions.length && currentGame.state.missions.map(mission => {
                   return (
-                    <Accordion defaultActiveKey="0">
-                      <Card>
-                        <Accordion.Toggle as={Button} variant="info" eventKey={(this.state.activeMission === mission.missionNumber) ? "0" : "1"}>
-                          Mission #{mission.missionNumber} - Player Count ({currentGame.state.config[`userCountMission${mission.missionNumber}`]}) {String(this.state.activeMission === mission.missionNumber)}
-                        </Accordion.Toggle>
-                        <Accordion.Collapse disable={this.state.activeMission !== mission.missionNumber} eventKey={(this.state.activeMission === mission.missionNumber) ? "0" : "1"}>
-                        <Card.Body>
-                          <Mission users={currentGame.state.users} mission={mission} />
-                        </Card.Body>
-                        </Accordion.Collapse>
-                      </Card>
-                    </Accordion>
+                    <Mission
+                      users={currentGame.state.users}
+                      mission={mission}
+                      activeMissionNumber={this.state.activeMissionNumber}
+                      playerCount={currentGame.state.config[`userCountMission${mission.missionNumber}`]}
+                    />
                   )
                 })
                 }
