@@ -43,13 +43,17 @@ class MissionContainer extends Container {
     }
 
     incrementLeaderPosition(gameUsers) {
-      // punting for now
-      // this will need to check if it's the last user in the position list
-      // and reset to position 1 if it's incrementing
-      this.setState({
-        ...this.state,
-        leaderPosition: this.state.leaderPosition++,
-      });
+      const updatedState = { ...this.state };
+
+      // last user in the set need to reset the leader 1
+      if (this.state.leaderPosition === gameUsers.length) {
+        updatedState.leaderPosition = 1
+      }
+      else {
+        updatedState.leaderPosition++;
+      }
+
+      this.setState(updatedState);
     }
 }
 
